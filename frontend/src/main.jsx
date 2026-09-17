@@ -1,10 +1,11 @@
-import { StrictMode, useState } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
 const tabs = [
   { id: 'inicio', label: 'Início', icon: '⌂' },
   { id: 'anotacoes', label: 'Anotações', icon: '▤' },
+  { id: 'materiais', label: 'Materiais', icon: '▥' },
   { id: 'quiz', label: 'Quiz', icon: '?' },
 ];
 
@@ -49,6 +50,7 @@ function App() {
       <main>
         {activeTab === 'inicio' && <Home onNavigate={setActiveTab} />}
         {activeTab === 'anotacoes' && <Notes />}
+        {activeTab === 'materiais' && <Materials />}
         {activeTab === 'quiz' && <Quiz />}
         {activeTab === 'usuario' && <UserSettings darkMode={darkMode} setDarkMode={setDarkMode} />}
       </main>
@@ -120,7 +122,8 @@ function Home({ onNavigate }) {
         <div className="section-heading"><div><p className="eyebrow">Continue no seu ritmo</p><h2>Monte seu caminho</h2></div></div>
         <div className="path-grid">
           <PathCard number="01" title="Faça anotações" text="Guarde conceitos, exemplos e ideias importantes." action="Abrir anotações" onClick={() => onNavigate('anotacoes')} />
-          <PathCard number="02" title="Teste seus conhecimentos" text="Responda perguntas e acompanhe sua evolução." action="Ir para o quiz" onClick={() => onNavigate('quiz')} />
+          <PathCard number="02" title="Explore materiais" text="Escolha um tópico e encontre conteúdos para estudar." action="Ver materiais" onClick={() => onNavigate('materiais')} />
+          <PathCard number="03" title="Teste seus conhecimentos" text="Responda perguntas e acompanhe sua evolução." action="Ir para o quiz" onClick={() => onNavigate('quiz')} />
         </div>
       </section>
     </div>
@@ -132,8 +135,48 @@ function PathCard({ number, title, text, action, onClick }) {
 }
 
 function Notes() {
-  const [note, setNote] = useState('');
-  return <div className="page inner-page"><PageIntro eyebrow="Seu caderno" title="Anotações" text="Organize o que você está aprendendo em um só lugar." /><section className="notes-layout"><aside className="notes-sidebar"><button className="primary-button full-width" onClick={() => setNote('')}><span>+</span> Nova anotação</button><div className="note-list"><div className="note-list-empty"><span>▤</span><p>Suas anotações<br />aparecerão aqui.</p></div></div></aside><div className="note-editor"><input placeholder="Título da anotação" aria-label="Título da anotação" /><textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="Escreva aqui suas ideias sobre Java..." aria-label="Conteúdo da anotação" /><div className="editor-footer"><span>Rascunho</span><button className="save-button">Salvar anotação</button></div></div></section></div>;
+  const [notes, setNotes] = useState(() => JSON.parse(localStorage.getItem('java-studio-notes') || '[]'));
+  const [selectedId, setSelectedId] = useState(null);
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [feedback, setFeedback] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('java-studio-notes', JSON.stringify(notes));
+  }, [notes]);
+
+  function startNewNote() {
+    setSelectedId(null);
+    setTitle('');
+    setContent('');
+    setFeedback('');
+  }
+
+  function selectNote(note) {
+    setSelectedId(note.id);
+    setTitle(note.title);
+    setContent(note.content);
+    setFeedback('');
+  }
+
+  function saveNote() {
+    if (!title.trim() || !content.trim()) {
+      setFeedback('Preencha o título e o conteúdo antes de salvar.');
+      return;
+    }
+    const savedNote = { id: selectedId || Date.now(), title: title.trim(), content: content.trim(), updatedAt: new Date().toISOString() };
+    setNotes((currentNotes) => selectedId ? currentNotes.map((note) => note.id === selectedId ? savedNote : note) : [savedNote, ...currentNotes]);
+    setSelectedId(savedNote.id);
+    setFeedback('Anotação salva neste dispositivo.');
+  }
+
+  return <div className="page inner-page"><PageIntro eyebrow="Seu caderno" title="Anotações" text="Organize o que você está aprendendo em um só lugar." /><section className="notes-layout"><aside className="notes-sidebar"><button className="primary-button full-width" onClick={startNewNote}><span>+</span> Nova anotação</button><div className="note-list">{notes.length === 0 ? <div className="note-list-empty"><span>▤</span><p>Suas anotações<br />aparecerão aqui.</p></div> : notes.map((note) => <button className={selectedId === note.id ? 'note-item selected' : 'note-item'} key={note.id} onClick={() => selectNote(note)}><strong>{note.title}</strong><span>{note.content.slice(0, 42)}{note.content.length > 42 ? '...' : ''}</span></button>)}</div></aside><div className="note-editor"><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Título da anotação" aria-label="Título da anotação" /><textarea value={content} onChange={(event) => setContent(event.target.value)} placeholder="Escreva aqui suas ideias sobre Java..." aria-label="Conteúdo da anotação" /><div className="editor-footer"><span className={feedback.includes('salva') ? 'success-message' : 'error-message'}>{feedback || 'Rascunho local'}</span><button className="save-button" onClick={saveNote}>Salvar anotação</button></div></div></section></div>;
+}
+
+function Materials() {
+  const [topic, setTopic] = useState('fundamentos');
+  const [difficulty, setDifficulty] = useState('iniciante');
+  return <div className="page inner-page"><PageIntro eyebrow="Aprenda por tópicos" title="Materiais" text="Escolha um assunto e um nível para encontrar o material teórico ideal para você." /><section className="materials-panel"><div className="material-fields"><label>Tópico da linguagem Java<select value={topic} onChange={(event) => setTopic(event.target.value)}><option value="fundamentos">Fundamentos</option><option value="orientacao-objetos">Orientação a Objetos</option><option value="colecoes">Collections</option><option value="excecoes">Exceções</option><option value="spring">Spring Boot</option></select></label><label>Dificuldade<select value={difficulty} onChange={(event) => setDifficulty(event.target.value)}><option value="iniciante">Iniciante</option><option value="intermediario">Intermediário</option><option value="avancado">Avançado</option></select></label></div><div className="material-placeholder"><span className="placeholder-icon">✦</span><h2>Material teórico reservado</h2><p>O conteúdo de <strong>{topic.replace('-', ' ')}</strong> para o nível <strong>{difficulty}</strong> será inserido aqui.</p><button className="secondary-button" disabled>Baixar PDF em breve</button></div></section></div>;
 }
 
 function Quiz() {

@@ -11,6 +11,7 @@ O frontend está em desenvolvimento e já possui uma interface navegável com:
 - Salvamento das anotações no backend com validação de título e conteúdo
 - API Java para criar, editar, listar e apagar anotações
 - Área de materiais com seleção de tópico e dificuldade
+- Cadastro, login, sessão por cookie e logout
 - Área de quiz reservada para perguntas teóricas
 - Perfil do usuário
 - Alternância entre modo claro e escuro
@@ -81,7 +82,7 @@ npm run build
 - Conectar o frontend à API
 - Adicionar autenticação de usuários e associar anotações a cada conta
 - Gerar materiais teóricos a partir do tópico e dificuldade escolhidos
-- Permitir o download dos materiais em PDF
+- Permitir o download dos materiais em Markdown
 - Criar o banco de perguntas do quiz
 - Implementar o aplicativo mobile
 - Adicionar autenticação e progresso de estudos

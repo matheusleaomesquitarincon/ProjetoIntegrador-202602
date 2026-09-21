@@ -1,5 +1,10 @@
 import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { marked } from 'marked';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
+import Login from './pages/Login';
+import Cadastro from './pages/Cadastro';
 import './styles.css';
 
 const tabs = [
@@ -10,13 +15,26 @@ const tabs = [
 ];
 
 function App() {
+  const { user, loading, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('inicio');
   const [darkMode, setDarkMode] = useState(false);
+  const [authView, setAuthView] = useState('login');
+
+  if (loading) return <div className="auth-loading">Verificando sua sessão...</div>;
+  function navigate(target) {
+    if (!user && ['anotacoes', 'quiz', 'usuario'].includes(target)) {
+      setAuthView('login');
+      setActiveTab(target);
+      return;
+    }
+    setActiveTab(target);
+  }
+  if (!user && ['anotacoes', 'quiz', 'usuario'].includes(activeTab)) return authView === 'login' ? <Login onCreateAccount={() => setAuthView('cadastro')} /> : <Cadastro onBackToLogin={() => setAuthView('login')} />;
 
   return (
     <div className={darkMode ? 'app dark' : 'app'}>
       <header className="topbar">
-        <a className="brand" href="#inicio" onClick={() => setActiveTab('inicio')}>
+        <a className="brand" href="#inicio" onClick={() => navigate('inicio')}>
           <span className="brand-mark">J</span>
           <span>Java<span className="brand-accent">Studio</span></span>
         </a>
@@ -26,7 +44,7 @@ function App() {
             <button
               className={activeTab === tab.id ? 'nav-item active' : 'nav-item'}
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => navigate(tab.id)}
             >
               <span className="nav-icon" aria-hidden="true">{tab.icon}</span>
               {tab.label}
@@ -39,20 +57,22 @@ function App() {
             <span aria-hidden="true">{darkMode ? '☼' : '☾'}</span>
             <span className="theme-label">{darkMode ? 'Modo claro' : 'Modo escuro'}</span>
           </button>
-          <button className="profile-button" onClick={() => setActiveTab('usuario')} aria-label="Abrir perfil do usuário">
-            <span className="avatar">A</span>
-            <span className="profile-name">Meu perfil</span>
+          <button className="profile-button" onClick={() => navigate('usuario')} aria-label={user ? 'Abrir perfil do usuário' : 'Abrir tela de login'}>
+            <span className="avatar">{user ? user.email.charAt(0).toUpperCase() : '↗'}</span>
+            <span className="profile-name">{user ? 'Meu perfil' : 'Entrar'}</span>
             <span className="chevron" aria-hidden="true">⌄</span>
           </button>
         </div>
       </header>
 
       <main>
-        {activeTab === 'inicio' && <Home onNavigate={setActiveTab} />}
-        {activeTab === 'anotacoes' && <Notes />}
+        {activeTab === 'inicio' && <Home onNavigate={navigate} />}
         {activeTab === 'materiais' && <Materials />}
-        {activeTab === 'quiz' && <Quiz />}
-        {activeTab === 'usuario' && <UserSettings darkMode={darkMode} setDarkMode={setDarkMode} />}
+        {user && <PrivateRoute>
+          {activeTab === 'anotacoes' && <Notes />}
+          {activeTab === 'quiz' && <Quiz />}
+          {activeTab === 'usuario' && <UserSettings darkMode={darkMode} setDarkMode={setDarkMode} user={user} onLogout={logout} />}
+        </PrivateRoute>}
       </main>
     </div>
   );
@@ -143,7 +163,7 @@ function Notes() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/notas')
+    fetch('http://localhost:8080/api/notas', { credentials: 'include' })
       .then((response) => {
         if (!response.ok) throw new Error('Não foi possível carregar as anotações.');
         return response.json();
@@ -174,7 +194,7 @@ function Notes() {
     }
     const method = selectedId ? 'PUT' : 'POST';
     const endpoint = selectedId ? `http://localhost:8080/api/notas/${selectedId}` : 'http://localhost:8080/api/notas';
-    const response = await fetch(endpoint, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ titulo: title.trim(), conteudo: content.trim() }) });
+    const response = await fetch(endpoint, { method, credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ titulo: title.trim(), conteudo: content.trim() }) });
     if (!response.ok) { setFeedback('Não foi possível salvar a anotação.'); return; }
     const savedNote = await response.json();
     setNotes((currentNotes) => selectedId ? currentNotes.map((note) => note.id === selectedId ? savedNote : note) : [savedNote, ...currentNotes]);
@@ -184,7 +204,7 @@ function Notes() {
 
   async function deleteNote() {
     if (!selectedId || !window.confirm('Apagar esta anotação?')) return;
-    const response = await fetch(`http://localhost:8080/api/notas/${selectedId}`, { method: 'DELETE' });
+    const response = await fetch(`http://localhost:8080/api/notas/${selectedId}`, { method: 'DELETE', credentials: 'include' });
     if (!response.ok) { setFeedback('Não foi possível apagar a anotação.'); return; }
     setNotes((currentNotes) => currentNotes.filter((note) => note.id !== selectedId));
     startNewNote();
@@ -196,19 +216,47 @@ function Notes() {
 function Materials() {
   const [topic, setTopic] = useState('fundamentos');
   const [difficulty, setDifficulty] = useState('iniciante');
-  return <div className="page inner-page"><PageIntro eyebrow="Aprenda por tópicos" title="Materiais" text="Escolha um assunto e um nível para encontrar o material teórico ideal para você." /><section className="materials-panel"><div className="material-fields"><label>Tópico da linguagem Java<select value={topic} onChange={(event) => setTopic(event.target.value)}><option value="fundamentos">Fundamentos</option><option value="orientacao-objetos">Orientação a Objetos</option><option value="colecoes">Collections</option><option value="excecoes">Exceções</option><option value="spring">Spring Boot</option></select></label><label>Dificuldade<select value={difficulty} onChange={(event) => setDifficulty(event.target.value)}><option value="iniciante">Iniciante</option><option value="intermediario">Intermediário</option><option value="avancado">Avançado</option></select></label></div><div className="material-placeholder"><span className="placeholder-icon">✦</span><h2>Material teórico reservado</h2><p>O conteúdo de <strong>{topic.replace('-', ' ')}</strong> para o nível <strong>{difficulty}</strong> será inserido aqui.</p><button className="secondary-button" disabled>Baixar PDF em breve</button></div></section></div>;
+  const [material, setMaterial] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    setLoading(true);
+    setError('');
+    fetch(`http://localhost:8080/api/materiais/${topic}/${difficulty}`, { credentials: 'include' })
+      .then((response) => {
+        if (!response.ok) throw new Error('Material não encontrado.');
+        return response.json();
+      })
+      .then(setMaterial)
+      .catch((requestError) => setError(requestError.message))
+      .finally(() => setLoading(false));
+  }, [topic, difficulty]);
+
+  async function downloadMarkdown() {
+    const response = await fetch(`http://localhost:8080/api/materiais/${topic}/${difficulty}/md`, { credentials: 'include' });
+    if (!response.ok) { setError('Não foi possível baixar o material.'); return; }
+    const file = await response.blob();
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(file);
+    link.download = `${topic}-${difficulty}.md`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
+
+  return <div className="page inner-page"><PageIntro eyebrow="Aprenda por tópicos" title="Materiais" text="Escolha um assunto e um nível para encontrar o material teórico ideal para você." /><section className="materials-panel"><div className="material-fields"><label>Tópico da linguagem Java<select value={topic} onChange={(event) => setTopic(event.target.value)}><option value="fundamentos">Fundamentos</option><option value="orientacao-a-objetos">Orientação a Objetos</option><option value="collections">Collections</option><option value="excecoes">Exceções</option><option value="spring">Spring Boot</option></select></label><label>Dificuldade<select value={difficulty} onChange={(event) => setDifficulty(event.target.value)}><option value="iniciante">Iniciante</option><option value="intermediario">Intermediário</option><option value="avancado">Avançado</option></select></label></div>{loading && <div className="material-placeholder"><p>Carregando material...</p></div>}{error && <div className="material-placeholder"><p>{error}</p></div>}{material && !loading && <article className="material-reader"><div className="material-reader-header"><span className="card-number">{material.dificuldade}</span><button className="secondary-button" onClick={downloadMarkdown}>Baixar Markdown</button></div><div className="markdown-content" dangerouslySetInnerHTML={{ __html: marked.parse(material.conteudo) }} /></article>}</section></div>;
 }
 
 function Quiz() {
   return <div className="page inner-page"><PageIntro eyebrow="Pratique" title="Quiz de Java" text="Teste o que você aprendeu e descubra onde pode continuar evoluindo." /><div className="quiz-empty"><div className="quiz-symbol">?</div><h2>Seu primeiro quiz está sendo preparado</h2><p>As perguntas teóricas sobre Java serão adicionadas aqui.</p><button className="secondary-button" disabled>Em breve</button></div></div>;
 }
 
-function UserSettings({ darkMode, setDarkMode }) {
-  return <div className="page inner-page"><PageIntro eyebrow="Personalize sua experiência" title="Meu perfil" text="Ajuste suas preferências para estudar do seu jeito." /><section className="settings-panel"><div className="setting-profile"><span className="large-avatar">A</span><div><h2>Olá, estudante</h2><p>Seu perfil de aprendizado</p></div><button className="secondary-button">Editar perfil</button></div><div className="setting-row"><div><h3>Aparência</h3><p>Escolha como o Java Studio aparece para você.</p></div><label className="switch-label"><span>{darkMode ? 'Modo escuro' : 'Modo claro'}</span><button className={darkMode ? 'switch on' : 'switch'} onClick={() => setDarkMode(!darkMode)} aria-label="Alternar tema"><span /></button></label></div></section></div>;
+function UserSettings({ darkMode, setDarkMode, user, onLogout }) {
+  return <div className="page inner-page"><PageIntro eyebrow="Personalize sua experiência" title="Meu perfil" text="Ajuste suas preferências para estudar do seu jeito." /><section className="settings-panel"><div className="setting-profile"><span className="large-avatar">{user.email.charAt(0).toUpperCase()}</span><div><h2>{user.email}</h2><p>Conta do Java Studio</p></div><button className="secondary-button" onClick={onLogout}>Sair da conta</button></div><div className="setting-row"><div><h3>Aparência</h3><p>Escolha como o Java Studio aparece para você.</p></div><label className="switch-label"><span>{darkMode ? 'Modo escuro' : 'Modo claro'}</span><button className={darkMode ? 'switch on' : 'switch'} onClick={() => setDarkMode(!darkMode)} aria-label="Alternar tema"><span /></button></label></div></section></div>;
 }
 
 function PageIntro({ eyebrow, title, text }) {
   return <div className="page-intro"><p className="eyebrow">{eyebrow}</p><h1>{title}</h1><p>{text}</p></div>;
 }
 
-createRoot(document.getElementById('root')).render(<StrictMode><App /></StrictMode>);
+createRoot(document.getElementById('root')).render(<StrictMode><AuthProvider><App /></AuthProvider></StrictMode>);

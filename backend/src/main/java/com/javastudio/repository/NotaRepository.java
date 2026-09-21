@@ -8,4 +8,5 @@ public interface NotaRepository {
     Nota salvar(Nota nota);
     Optional<Nota> buscarPorId(long id);
     List<Nota> listarTodas();
+    void apagar(long id);
 }

@@ -24,4 +24,9 @@ public class NotaRepositoryMemoria implements NotaRepository {
     public List<Nota> listarTodas() {
         return List.copyOf(notas);
     }
+
+    @Override
+    public void apagar(long id) {
+        notas.removeIf(nota -> nota.getId() == id);
+    }
 }

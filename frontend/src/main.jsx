@@ -135,15 +135,23 @@ function PathCard({ number, title, text, action, onClick }) {
 }
 
 function Notes() {
-  const [notes, setNotes] = useState(() => JSON.parse(localStorage.getItem('java-studio-notes') || '[]'));
+  const [notes, setNotes] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [feedback, setFeedback] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem('java-studio-notes', JSON.stringify(notes));
-  }, [notes]);
+    fetch('http://localhost:8080/api/notas')
+      .then((response) => {
+        if (!response.ok) throw new Error('Não foi possível carregar as anotações.');
+        return response.json();
+      })
+      .then(setNotes)
+      .catch(() => setFeedback('Não foi possível conectar ao backend Java.'))
+      .finally(() => setLoading(false));
+  }, []);
 
   function startNewNote() {
     setSelectedId(null);
@@ -154,23 +162,35 @@ function Notes() {
 
   function selectNote(note) {
     setSelectedId(note.id);
-    setTitle(note.title);
-    setContent(note.content);
+    setTitle(note.titulo);
+    setContent(note.conteudo);
     setFeedback('');
   }
 
-  function saveNote() {
+  async function saveNote() {
     if (!title.trim() || !content.trim()) {
       setFeedback('Preencha o título e o conteúdo antes de salvar.');
       return;
     }
-    const savedNote = { id: selectedId || Date.now(), title: title.trim(), content: content.trim(), updatedAt: new Date().toISOString() };
+    const method = selectedId ? 'PUT' : 'POST';
+    const endpoint = selectedId ? `http://localhost:8080/api/notas/${selectedId}` : 'http://localhost:8080/api/notas';
+    const response = await fetch(endpoint, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ titulo: title.trim(), conteudo: content.trim() }) });
+    if (!response.ok) { setFeedback('Não foi possível salvar a anotação.'); return; }
+    const savedNote = await response.json();
     setNotes((currentNotes) => selectedId ? currentNotes.map((note) => note.id === selectedId ? savedNote : note) : [savedNote, ...currentNotes]);
     setSelectedId(savedNote.id);
-    setFeedback('Anotação salva neste dispositivo.');
+    setFeedback('Anotação salva no backend.');
   }
 
-  return <div className="page inner-page"><PageIntro eyebrow="Seu caderno" title="Anotações" text="Organize o que você está aprendendo em um só lugar." /><section className="notes-layout"><aside className="notes-sidebar"><button className="primary-button full-width" onClick={startNewNote}><span>+</span> Nova anotação</button><div className="note-list">{notes.length === 0 ? <div className="note-list-empty"><span>▤</span><p>Suas anotações<br />aparecerão aqui.</p></div> : notes.map((note) => <button className={selectedId === note.id ? 'note-item selected' : 'note-item'} key={note.id} onClick={() => selectNote(note)}><strong>{note.title}</strong><span>{note.content.slice(0, 42)}{note.content.length > 42 ? '...' : ''}</span></button>)}</div></aside><div className="note-editor"><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Título da anotação" aria-label="Título da anotação" /><textarea value={content} onChange={(event) => setContent(event.target.value)} placeholder="Escreva aqui suas ideias sobre Java..." aria-label="Conteúdo da anotação" /><div className="editor-footer"><span className={feedback.includes('salva') ? 'success-message' : 'error-message'}>{feedback || 'Rascunho local'}</span><button className="save-button" onClick={saveNote}>Salvar anotação</button></div></div></section></div>;
+  async function deleteNote() {
+    if (!selectedId || !window.confirm('Apagar esta anotação?')) return;
+    const response = await fetch(`http://localhost:8080/api/notas/${selectedId}`, { method: 'DELETE' });
+    if (!response.ok) { setFeedback('Não foi possível apagar a anotação.'); return; }
+    setNotes((currentNotes) => currentNotes.filter((note) => note.id !== selectedId));
+    startNewNote();
+  }
+
+  return <div className="page inner-page"><PageIntro eyebrow="Seu caderno" title="Anotações" text="Organize o que você está aprendendo em um só lugar." /><section className="notes-layout"><aside className="notes-sidebar"><button className="primary-button full-width" onClick={startNewNote}><span>+</span> Nova anotação</button><div className="note-list">{loading ? <div className="note-list-empty"><p>Carregando anotações...</p></div> : notes.length === 0 ? <div className="note-list-empty"><span>▤</span><p>Suas anotações<br />aparecerão aqui.</p></div> : notes.map((note) => <button className={selectedId === note.id ? 'note-item selected' : 'note-item'} key={note.id} onClick={() => selectNote(note)}><strong>{note.titulo}</strong><span>{note.conteudo.slice(0, 42)}{note.conteudo.length > 42 ? '...' : ''}</span></button>)}</div></aside><div className="note-editor"><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Título da anotação" aria-label="Título da anotação" /><textarea value={content} onChange={(event) => setContent(event.target.value)} placeholder="Escreva aqui suas ideias sobre Java..." aria-label="Conteúdo da anotação" /><div className="editor-footer"><span className={feedback.includes('salva') ? 'success-message' : 'error-message'}>{feedback || 'Alterações no backend'}</span><div className="note-actions">{selectedId && <button className="delete-button" onClick={deleteNote}>Apagar</button>}<button className="save-button" onClick={saveNote}>Salvar anotação</button></div></div></div></section></div>;
 }
 
 function Materials() {

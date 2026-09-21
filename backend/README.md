@@ -11,7 +11,18 @@ Base inicial do backend do Java Studio, estruturada com Programacao Orientada a 
 - `NotaRepositoryMemoria` implementa o repositorio em memoria.
 - `NotaService` concentra as regras de criacao, atualizacao e consulta de notas.
 
-## Executar o exemplo
+## API de anotacoes
+
+Com o servidor em execucao, a API oferece:
+
+- `GET /api/notas` para listar anotacoes
+- `POST /api/notas` para criar uma anotacao
+- `PUT /api/notas/{id}` para editar uma anotacao
+- `DELETE /api/notas/{id}` para apagar uma anotacao
+
+O frontend React funciona como cliente dessa API. Os dados ficam em `backend/data/notas.db`, que nao e versionado.
+
+## Executar o backend
 
 Na raiz do backend:
 
@@ -20,4 +31,4 @@ javac -d out $(Get-ChildItem -Recurse -Filter *.java | ForEach-Object FullName)
 java -cp out com.javastudio.Application
 ```
 
-O repositorio em memoria e uma base temporaria. A proxima etapa sera substituir sua implementacao por persistencia real e expor os endpoints para o frontend.
+O servidor ficara disponivel em `http://localhost:8080`.

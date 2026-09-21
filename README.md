@@ -8,7 +8,8 @@ O frontend está em desenvolvimento e já possui uma interface navegável com:
 
 - Página inicial com conteúdo introdutório sobre Java
 - Área de anotações
-- Salvamento local das anotações com validação de título e conteúdo
+- Salvamento das anotações no backend com validação de título e conteúdo
+- API Java para criar, editar, listar e apagar anotações
 - Área de materiais com seleção de tópico e dificuldade
 - Área de quiz reservada para perguntas teóricas
 - Perfil do usuário
@@ -78,7 +79,7 @@ npm run build
 
 - Implementar a API do backend em Java
 - Conectar o frontend à API
-- Conectar o salvamento de anotações ao backend Java
+- Adicionar autenticação de usuários e associar anotações a cada conta
 - Gerar materiais teóricos a partir do tópico e dificuldade escolhidos
 - Permitir o download dos materiais em PDF
 - Criar o banco de perguntas do quiz

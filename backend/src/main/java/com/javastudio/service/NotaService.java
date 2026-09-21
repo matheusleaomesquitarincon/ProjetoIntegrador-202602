@@ -25,4 +25,10 @@ public class NotaService {
     public List<Nota> listar() {
         return repository.listarTodas();
     }
+
+    public void apagar(long id) {
+        repository.buscarPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Nota nao encontrada."));
+        repository.apagar(id);
+    }
 }

@@ -1,0 +1,40 @@
+P: O que caracteriza a Inversão de Controle (IoC) no Spring?
+A: O container do Spring cria e injeta as dependências das classes, em vez de a classe criá-las com "new"
+B: Cada classe é obrigada a criar suas próprias dependências manualmente
+C: IoC elimina totalmente o uso de classes de serviço
+D: IoC só se aplica a testes automatizados
+R: A
+E: Em vez de a classe instanciar suas dependências diretamente, ela apenas as declara, e o IoC Container do Spring se encarrega de criar e injetar essas dependências automaticamente.
+---
+P: Por que a injeção via construtor é preferida em relação à injeção por @Autowired em campo?
+A: Torna a classe imutável, explicita as dependências e facilita testes unitários
+B: Injeção via construtor é mais lenta em tempo de execução
+C: @Autowired em campo é obrigatório em aplicações modernas
+D: Injeção via construtor impede o uso de interfaces
+R: A
+E: A injeção via construtor permite declarar o campo como final (imutável), deixa explícitas todas as dependências na assinatura, e facilita passar mocks manualmente em testes, sem depender do container Spring.
+---
+P: Qual é o papel de uma interface que estende JpaRepository<Entidade, TipoDaChave> no Spring Data JPA?
+A: O Spring Data gera automaticamente a implementação, incluindo métodos de CRUD e query methods
+B: Ela precisa ser implementada manualmente linha por linha
+C: Ela serve apenas para armazenar constantes
+D: Ela substitui a necessidade de anotar a entidade com @Entity
+R: A
+E: Basta declarar a interface estendendo JpaRepository; o Spring Data JPA gera a implementação em tempo de execução, incluindo métodos como save, findById, findAll e query methods derivados do nome, como findByNomeContaining.
+---
+P: O que a anotação @Valid combinada com @RequestBody faz em um endpoint de criação?
+A: Ativa a validação das anotações de Bean Validation definidas na entidade antes de executar o método
+B: Impede totalmente que o corpo da requisição seja lido
+C: Substitui a necessidade de anotar a entidade com @Entity
+D: Só funciona em métodos marcados com @GetMapping
+R: A
+E: @Valid ativa a verificação de anotações como @NotBlank, @Size e @Positive na entidade recebida. Se a validação falhar, o Spring retorna automaticamente uma resposta HTTP 400 (Bad Request) com os detalhes do erro.
+---
+P: Qual é a ordem correta da arquitetura em camadas típica de uma aplicação Spring Boot?
+A: Controller → Service → Repository → Banco de dados
+B: Repository → Controller → Service
+C: Service → Controller → Repository
+D: Banco de dados → Controller → Repository
+R: A
+E: O Controller recebe requisições HTTP e delega ao Service, que contém a lógica de negócio e orquestra chamadas ao Repository, responsável exclusivamente pelo acesso a dados.
+---

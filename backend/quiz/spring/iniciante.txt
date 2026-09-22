@@ -1,0 +1,40 @@
+P: Qual é o principal problema que o Spring Boot resolve em relação ao Spring Framework tradicional?
+A: Elimina a necessidade de configuração manual extensa através da autoconfiguração
+B: Remove totalmente a necessidade de escrever código Java
+C: Só funciona sem servidor web embutido
+D: Substitui o uso do JDK
+R: A
+E: O Spring "puro" exigia muita configuração manual (XML extenso, configuração de servidores). O Spring Boot oferece autoconfiguração baseada nas dependências do projeto, incluindo um servidor web embutido, minimizando a configuração manual necessária.
+---
+P: A anotação @SpringBootApplication é, na prática, a combinação de quais três anotações?
+A: @Configuration, @EnableAutoConfiguration e @ComponentScan
+B: @RestController, @GetMapping e @PostMapping
+C: @Entity, @Id e @Column
+D: @Service, @Repository e @Controller
+R: A
+E: @SpringBootApplication combina @Configuration (fonte de beans), @EnableAutoConfiguration (ativa autoconfiguração) e @ComponentScan (procura automaticamente componentes anotados no pacote e subpacotes).
+---
+P: O que a anotação @RestController faz, na prática, em relação a @Controller?
+A: Combina @Controller com @ResponseBody, escrevendo o retorno diretamente no corpo da resposta HTTP
+B: Desativa o roteamento HTTP da classe
+C: Só permite retornar páginas HTML renderizadas no servidor
+D: Impede o uso de @GetMapping na mesma classe
+R: A
+E: @RestController é a junção de @Controller (marca a classe como componente web) com @ResponseBody (o retorno dos métodos vai direto no corpo da resposta, geralmente como JSON), evitando a resolução de views tradicionais.
+---
+P: Para que serve a anotação @PathVariable em um método de controller?
+A: Extrai um valor diretamente de um segmento da URL da requisição
+B: Define o tipo de retorno do método como void
+C: Substitui a necessidade de @GetMapping
+D: Só funciona em métodos anotados com @PostMapping
+R: A
+E: @PathVariable captura um valor presente no caminho da URL, como em "/ola/{nome}", onde acessar "/ola/Maria" faz o parâmetro nome receber automaticamente o valor "Maria".
+---
+P: Onde ficam centralizadas as configurações de uma aplicação Spring Boot, como a porta do servidor?
+A: No arquivo application.properties (ou application.yml)
+B: Diretamente dentro da classe principal, hardcoded
+C: Em um banco de dados separado obrigatoriamente
+D: No arquivo pom.xml
+R: A
+E: O application.properties (ou seu equivalente em YAML, application.yml) centraliza configurações como server.port e spring.application.name, permitindo ajustar o comportamento da aplicação sem alterar código Java.
+---

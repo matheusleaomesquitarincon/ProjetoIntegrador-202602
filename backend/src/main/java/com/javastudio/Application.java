@@ -22,7 +22,11 @@ public class Application {
         try {
             com.sun.net.httpserver.HttpServer server = com.sun.net.httpserver.HttpServer.create(new java.net.InetSocketAddress(8080), 0);
             new AuthHttpServer(server, new AuthService(new UsuarioRepositoryArquivo(Path.of("data", "usuarios.db")), new SenhaService()), sessoes);
-            new NotaHttpServer(notaService, new MaterialService(Path.of("materials")), sessoes, 8080, server).iniciar();
+            NotaHttpServer notaHttpServer = new NotaHttpServer(notaService, new MaterialService(Path.of("materials")), sessoes, 8080, server);
+            com.javastudio.service.QuizService quizService = new com.javastudio.service.QuizService(
+                    Path.of("quiz"), new com.javastudio.repository.QuizResultadoRepositoryArquivo(Path.of("data", "quiz_resultados.db")));
+            new com.javastudio.api.QuizHttpServer(quizService, sessoes, server);
+            notaHttpServer.iniciar();
         } catch (Exception exception) {
             throw new IllegalStateException("Nao foi possivel iniciar o backend.", exception);
         }

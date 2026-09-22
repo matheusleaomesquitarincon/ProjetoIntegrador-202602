@@ -1,0 +1,40 @@
+P: Como o HashMap trata buckets que acumulam muitas colisões de hash desde o Java 8?
+A: Converte a lista encadeada do bucket em uma árvore rubro-negra balanceada, reduzindo a busca para O(log n)
+B: Descarta automaticamente as entradas mais antigas
+C: Lança uma exceção obrigatória
+D: Transforma o HashMap inteiro em um TreeMap
+R: A
+E: A partir do Java 8, quando um bucket específico acumula muitas colisões (limite padrão de 8), sua lista encadeada é convertida em uma árvore balanceada, melhorando a busca dentro daquele bucket de O(n) para O(log n).
+---
+P: O que dispara o redimensionamento (rehashing) de um HashMap?
+A: O número de entradas ultrapassar capacidade multiplicada pelo fator de carga
+B: A chamada do método toString()
+C: A ausência de um construtor customizado
+D: A ordenação manual das chaves
+R: A
+E: Quando o total de entradas ultrapassa capacidade × fator de carga (padrão 16 × 0.75), o array interno é redimensionado e todas as entradas são recolocadas (rehashing), uma operação O(n) amortizada ao longo de várias inserções.
+---
+P: Por que ConcurrentHashMap é preferível a um HashMap comum em cenários multithread?
+A: Porque HashMap não é thread-safe e pode causar corrupção de dados sob acesso concorrente
+B: Porque ConcurrentHashMap é sempre mais rápido em single-thread também
+C: Porque HashMap não aceita Strings como chave
+D: Porque ConcurrentHashMap não permite leitura simultânea
+R: A
+E: HashMap não é thread-safe; usá-lo simultaneamente em múltiplas threads sem sincronização externa pode corromper dados. ConcurrentHashMap permite leitura e escrita concorrente com sincronização granular e alta performance.
+---
+P: Em que cenário CopyOnWriteArrayList é mais indicada?
+A: Cenários com muitas leituras e poucas escritas concorrentes
+B: Cenários com escritas constantes e leituras raras
+C: Substituir completamente o ArrayList em qualquer aplicação
+D: Apenas em aplicações single-thread
+R: A
+E: CopyOnWriteArrayList cria uma cópia completa do array a cada escrita, o que torna escritas custosas, mas permite que leituras nunca sejam bloqueadas — ideal quando há muito mais leitura do que escrita concorrente.
+---
+P: Qual é a complexidade média de busca em um HashMap/HashSet, segundo a tabela de Big-O apresentada?
+A: O(1) médio
+B: O(n) sempre
+C: O(log n) sempre, mesmo no melhor caso
+D: O(n²) no melhor caso
+R: A
+E: HashMap e HashSet oferecem busca O(1) em média, graças ao uso de hashing direto para localizar buckets; o pior caso (colisões extremas) pode chegar a O(log n) desde o Java 8, graças à árvore balanceada interna.
+---

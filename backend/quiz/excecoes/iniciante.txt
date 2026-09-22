@@ -1,0 +1,40 @@
+P: O que acontece quando uma exceção não é tratada em um programa Java?
+A: O programa encerra abruptamente, exibindo um stack trace no console
+B: A exceção é ignorada e o programa continua normalmente
+C: O programa entra em loop infinito
+D: A JVM reinicia automaticamente
+R: A
+E: Sem tratamento adequado (try/catch), uma exceção não capturada interrompe o fluxo do programa e o encerra abruptamente, exibindo o stack trace no console.
+---
+P: Qual é a diferença entre checked exceptions e unchecked exceptions (RuntimeException)?
+A: Checked exceptions são verificadas em tempo de compilação; unchecked não são
+B: Unchecked exceptions não podem ser capturadas com catch
+C: Checked exceptions só existem em versões antigas do Java
+D: Não existe diferença prática entre elas
+R: A
+E: Checked exceptions (como IOException) obrigam o compilador a exigir tratamento ou declaração com throws. Unchecked exceptions (subclasses de RuntimeException) não passam por essa verificação em compilação.
+---
+P: Qual bloco de um try/catch/finally sempre executa, tenha ocorrido exceção ou não?
+A: finally
+B: catch
+C: try
+D: Nenhum deles é garantido
+R: A
+E: O bloco finally executa sempre, independentemente de uma exceção ter ocorrido ou não, sendo tipicamente usado para liberar recursos como arquivos e conexões.
+---
+P: Ao usar múltiplos blocos catch, qual é a ordem correta de organização?
+A: Do tipo de exceção mais específico para o mais genérico
+B: Do mais genérico para o mais específico
+C: Em ordem alfabética do nome da exceção
+D: A ordem não importa em nenhum caso
+R: A
+E: Um catch(Exception e) genérico colocado antes de um catch mais específico capturaria tudo, tornando os blocos abaixo inalcançáveis — o que inclusive gera erro de compilação em Java.
+---
+P: Para que serve a palavra-chave "throws" na assinatura de um método?
+A: Declarar que o método pode lançar uma exceção checked, repassando a responsabilidade de tratá-la
+B: Lançar imediatamente uma exceção ao ser compilado
+C: Capturar automaticamente qualquer exceção interna
+D: Impedir que o método seja chamado por outras classes
+R: A
+E: Quando um método pode lançar uma exceção checked sem tratá-la internamente, ele usa throws na assinatura, repassando ao código que o chama a obrigação de tratá-la ou também declará-la.
+---

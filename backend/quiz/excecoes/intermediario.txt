@@ -1,0 +1,40 @@
+P: Quando é recomendado criar uma exceção customizada checked (extends Exception) em vez de unchecked?
+A: Quando o erro é uma condição que o código chamador pode e deve tratar de forma recuperável
+B: Sempre, checked é obrigatória em qualquer exceção customizada
+C: Apenas quando o erro é um bug de programação
+D: Nunca, checked exceptions foram descontinuadas
+R: A
+E: Exceções checked customizadas fazem sentido para condições recuperáveis pelo chamador (como saldo insuficiente); erros que representam bugs ou estados inconsistentes costumam ser melhor representados como unchecked (RuntimeException).
+---
+P: O que o recurso multi-catch ("catch (A | B e)") permite fazer?
+A: Tratar múltiplos tipos de exceção no mesmo bloco catch, quando a ação é idêntica
+B: Capturar exceções de diferentes threads simultaneamente
+C: Ignorar completamente qualquer exceção lançada
+D: Substituir o uso do bloco finally
+R: A
+E: Multi-catch evita duplicar o mesmo código de tratamento em blocos catch separados quando o tratamento desejado é idêntico para tipos diferentes de exceção, como NumberFormatException | NullPointerException.
+---
+P: Qual é a vantagem do try-with-resources introduzido no Java 7?
+A: Fecha automaticamente recursos que implementam AutoCloseable, mesmo em caso de exceção
+B: Elimina totalmente a necessidade de blocos catch
+C: Só funciona com arquivos de texto simples
+D: Impede que qualquer exceção seja lançada
+R: A
+E: try-with-resources fecha automaticamente qualquer recurso AutoCloseable (como FileReader) ao sair do bloco, eliminando o finally verboso necessário antes do Java 7 para garantir o fechamento de recursos.
+---
+P: Por que "engolir" (silenciar) uma exceção em um bloco catch vazio é considerado uma má prática?
+A: Porque o erro desaparece sem deixar rastro, dificultando a depuração
+B: Porque isso torna o programa mais rápido
+C: Porque é proibido pelo compilador Java
+D: Porque catch vazio nunca compila
+R: A
+E: Um catch vazio faz o erro desaparecer silenciosamente — ninguém saberá que a falha ocorreu. A prática recomendada é ao menos registrar (logar) a exceção capturada.
+---
+P: Como preservar a causa raiz de um erro ao encapsulá-lo em uma nova exceção?
+A: Passando a exceção original como segundo argumento do construtor da nova exceção
+B: Ignorando a exceção original completamente
+C: Convertendo a exceção original em uma String antes de descartá-la
+D: Usando apenas o método toString() da exceção original
+R: A
+E: Ao lançar "new RuntimeException(mensagem, causaOriginal)", o construtor de Throwable preserva o stack trace da causa raiz, essencial para depuração quando erros são traduzidos entre camadas da aplicação.
+---

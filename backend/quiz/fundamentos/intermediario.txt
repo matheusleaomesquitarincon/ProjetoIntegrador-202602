@@ -1,0 +1,40 @@
+P: Por que existem as wrapper classes (Integer, Double, Boolean...) em Java?
+A: Porque em contextos como Collections genéricas é preciso usar objetos, não primitivos
+B: Porque primitivos foram removidos do Java
+C: Porque elas tornam o código mais lento sem nenhum benefício
+D: Porque servem apenas para imprimir valores no console
+R: A
+E: Estruturas genéricas como List<Integer> exigem um tipo objeto — não é possível escrever List<int>. As wrapper classes permitem que primitivos sejam tratados como objetos via autoboxing/unboxing.
+---
+P: Qual é a forma correta de comparar o conteúdo de dois objetos Integer em Java?
+A: Usando o método .equals()
+B: Usando sempre o operador ==
+C: Usando o operador !=
+D: Convertendo para String antes de comparar
+R: A
+E: Como Integer é um objeto, == compara referências (com exceção do cache -128 a 127). A prática recomendada é sempre usar .equals() para comparar o valor real dos wrappers.
+---
+P: Por que StringBuilder é recomendado no lugar de concatenar Strings com += dentro de um loop grande?
+A: Porque Strings são imutáveis e cada concatenação cria um novo objeto, sendo ineficiente
+B: Porque += não funciona com Strings em Java
+C: Porque StringBuilder é mais fácil de ler apenas
+D: Porque Strings não podem ser usadas dentro de loops
+R: A
+E: Como String é imutável, cada += dentro de um loop cria uma nova String, descartando a anterior. StringBuilder modifica um buffer interno sem recriar objetos a cada iteração.
+---
+P: Como Java realmente passa parâmetros para um método?
+A: Sempre por valor — para objetos, o valor copiado é a referência
+B: Sempre por referência, para todos os tipos
+C: Por valor apenas para objetos, por referência para primitivos
+D: Depende do modificador de acesso do método
+R: A
+E: Java sempre passa por valor. Para objetos, o que é copiado é a referência (endereço); por isso mutações no objeto são visíveis fora do método, mas reatribuir a variável local não afeta o objeto original.
+---
+P: O que caracteriza um parâmetro varargs, como em "int... numeros"?
+A: Ele é tratado internamente como um array e deve ser o último parâmetro do método
+B: Só pode ser usado em métodos estáticos
+C: Permite apenas um argumento por chamada
+D: Substitui obrigatoriamente todos os outros parâmetros do método
+R: A
+E: Varargs permite um número variável de argumentos e é tratado internamente como um array; a regra é que só pode existir um por método, e ele precisa ser o último parâmetro da lista.
+---

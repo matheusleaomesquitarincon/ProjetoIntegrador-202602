@@ -1,0 +1,40 @@
+P: Por que lançar exceções com muita frequência pode ter um custo de performance perceptível?
+A: Porque cada instância de Throwable captura o stack trace completo no momento de sua criação
+B: Porque exceções sempre encerram a JVM imediatamente
+C: Porque exceções são reenviadas pela rede automaticamente
+D: Porque exceções não podem ser reutilizadas de forma alguma
+R: A
+E: A criação de qualquer Throwable percorre e registra toda a pilha de chamadas via fillInStackTrace(), uma operação com custo de CPU perceptível quando repetida com muita frequência, como dentro de loops de alta performance.
+---
+P: Como uma exceção lançada dentro de um CompletableFuture.supplyAsync() se comporta?
+A: Fica encapsulada no resultado futuro e é acessível via exceptionally() ou handle()
+B: É lançada imediatamente na thread principal, interrompendo tudo
+C: É ignorada silenciosamente pela JVM
+D: Sempre lança um IOException genérico
+R: A
+E: Exceções em processamento assíncrono não seguem o fluxo tradicional de try/catch síncrono; ficam encapsuladas no resultado futuro e podem ser tratadas com métodos específicos como exceptionally() e handle().
+---
+P: Qual é a diferença entre os métodos join() e get() de um CompletableFuture ao lidar com erros?
+A: get() lança ExecutionException (checked); join() lança CompletionException (unchecked)
+B: Ambos lançam exatamente o mesmo tipo de exceção
+C: join() nunca pode lançar exceções
+D: get() nunca precisa de tratamento de exceção
+R: A
+E: get() lança uma ExecutionException checked, exigindo tratamento obrigatório ou throws. join() lança uma CompletionException unchecked, mais conveniente em contextos funcionais como lambdas e streams.
+---
+P: Qual é o principal benefício de centralizar o tratamento de exceções com algo como @RestControllerAdvice em uma API?
+A: Evitar duplicação de try/catch em cada controller e padronizar as respostas HTTP de erro
+B: Eliminar completamente a necessidade de tratar exceções
+C: Impedir que qualquer exceção chegue ao cliente da API
+D: Substituir totalmente o uso de logging
+R: A
+E: Um manipulador global intercepta erros lançados em qualquer parte da aplicação e os traduz em respostas HTTP padronizadas, evitando que blocos try/catch repetitivos sejam espalhados por todos os controllers.
+---
+P: Por que logging estruturado com SLF4J/Logback é preferível a um simples e.printStackTrace()?
+A: Porque permite configurar níveis, formatos e destinos de log sem alterar código, algo que printStackTrace() não oferece
+B: Porque printStackTrace() não compila em versões recentes do Java
+C: Porque SLF4J impede que exceções sejam lançadas
+D: Porque printStackTrace() só funciona em ambientes de teste
+R: A
+E: printStackTrace() escreve diretamente no console/erro padrão sem controle. Frameworks como SLF4J com Logback permitem configurar níveis (DEBUG, INFO, WARN, ERROR), formatos e destinos de log de forma flexível, padrão em aplicações corporativas.
+---

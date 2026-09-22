@@ -1,0 +1,40 @@
+P: Qual é a principal diferença entre List e Set no Java Collections Framework?
+A: List permite elementos duplicados; Set não permite
+B: Set mantém a ordem de inserção; List nunca mantém
+C: List não pode ser percorrida com for-each
+D: Set só aceita valores numéricos
+R: A
+E: List é uma coleção ordenada que permite elementos duplicados e acesso por índice. Set garante que não existam elementos duplicados dentro da coleção.
+---
+P: O que acontece ao chamar map.put("chave", valor) para uma chave que já existe no Map?
+A: O valor anterior daquela chave é sobrescrito
+B: Uma exceção é sempre lançada
+C: A chave passa a ter dois valores associados
+D: A operação é ignorada silenciosamente
+R: A
+E: Em um Map, cada chave é única; ao usar put() com uma chave já existente, o valor anterior associado a ela é simplesmente sobrescrito pelo novo valor.
+---
+P: Por que é considerado boa prática declarar "List<String> lista = new ArrayList<>();" em vez de "ArrayList<String> lista = new ArrayList<>();"?
+A: Declarar pela interface deixa o código mais flexível para trocar a implementação depois
+B: ArrayList não pode ser usado como tipo de variável
+C: Isso evita completamente o uso de generics
+D: List é mais rápido que ArrayList em todos os casos
+R: A
+E: Programar voltado à interface (List) permite trocar a implementação concreta (ArrayList por outra) no futuro sem alterar o restante do código que depende apenas do contrato de List.
+---
+P: HashSet garante alguma ordem específica ao iterar seus elementos?
+A: Não, HashSet não garante nenhuma ordem específica de iteração
+B: Sim, sempre a ordem de inserção
+C: Sim, sempre ordem alfabética
+D: Sim, sempre ordem numérica crescente
+R: A
+E: HashSet é baseado em uma tabela hash e não garante ordem de iteração; para preservar ordem de inserção seria necessário um LinkedHashSet, e para ordem natural, um TreeSet.
+---
+P: Qual é a forma mais simples e segura de percorrer uma List em Java?
+A: Usando o laço for-each
+B: Usando apenas Thread separadas
+C: Usando recursão obrigatoriamente
+D: Usando apenas o método toString()
+R: A
+E: O for-each ("for (String item : lista)") é a forma mais simples e legível de percorrer qualquer Collection, sem precisar controlar índices manualmente.
+---

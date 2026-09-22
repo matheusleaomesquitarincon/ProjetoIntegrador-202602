@@ -1,0 +1,40 @@
+P: Onde ficam armazenados os objetos criados com "new" em uma aplicação Java?
+A: No Heap, compartilhado entre todas as threads
+B: Na Stack de cada thread
+C: No Metaspace, junto com os metadados de classes
+D: No PC Register da thread atual
+R: A
+E: Todos os objetos e arrays são alocados no Heap, uma área de memória compartilhada entre todas as threads da aplicação, diferente da Stack que guarda frames de método por thread.
+---
+P: Qual é a função do Garbage Collector na JVM?
+A: Identificar e liberar memória de objetos que não são mais alcançáveis
+B: Compilar o código-fonte Java em bytecode
+C: Gerenciar apenas conexões de rede da aplicação
+D: Armazenar os metadados das classes carregadas
+R: A
+E: O GC percorre o grafo de objetos a partir das GC Roots (fase Mark) e libera a memória de tudo que não está mais alcançável (fase Sweep), evitando vazamentos de memória sem um free() manual.
+---
+P: O que substituiu o antigo PermGen a partir do Java 8?
+A: O Metaspace, que usa memória nativa e cresce dinamicamente
+B: A Young Generation
+C: O Native Method Stack
+D: O Execution Engine
+R: A
+E: Desde o Java 8, o Metaspace armazena os metadados de classes usando memória nativa do sistema operacional, crescendo dinamicamente — diferente do PermGen, que tinha tamanho fixo e causava OutOfMemoryError com frequência.
+---
+P: O que o JIT Compiler faz na HotSpot JVM?
+A: Compila trechos de bytecode executados com frequência para código nativo, otimizando a execução
+B: Substitui totalmente a necessidade da JVM
+C: Apenas verifica erros de sintaxe antes da execução
+D: Gerencia exclusivamente a alocação de memória no Heap
+R: A
+E: O bytecode é inicialmente interpretado, mas os "hot spots" (trechos muito executados) são compilados para código de máquina nativo pelo JIT, usando otimizações como inlining e escape analysis.
+---
+P: Sobre a palavra-chave "final" aplicada a uma referência de objeto, qual afirmação é correta?
+A: Impede a reatribuição da referência, mas não impede a mutação do objeto apontado
+B: Torna o objeto completamente imutável automaticamente
+C: Impede que qualquer método da classe seja chamado
+D: Faz o objeto ser alocado apenas na Stack
+R: A
+E: "final" em uma referência impede reatribuí-la a outro objeto, mas o objeto em si continua mutável se a própria classe permitir alterações (como um ArrayList final, que ainda aceita add()).
+---

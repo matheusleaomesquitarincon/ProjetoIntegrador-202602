@@ -1,0 +1,40 @@
+P: Por que ArrayList costuma ser a escolha padrão em relação a LinkedList na maioria dos casos?
+A: ArrayList tem acesso por índice O(1), enquanto LinkedList só compensa em inserções/remoções intensas nas pontas
+B: LinkedList não pode armazenar objetos
+C: ArrayList não permite percorrer com for-each
+D: LinkedList foi removida em versões recentes do Java
+R: A
+E: ArrayList oferece acesso por índice muito rápido (O(1)); LinkedList só é vantajosa quando há muitas inserções/remoções frequentes nas extremidades ou no meio, cenário raro na maioria das aplicações.
+---
+P: Qual implementação de Map preserva a ordem de inserção dos elementos?
+A: LinkedHashMap
+B: HashMap
+C: TreeMap sempre em ordem de inserção
+D: Nenhuma implementação de Map preserva ordem
+R: A
+E: LinkedHashMap mantém a ordem em que os elementos foram inseridos, diferente de HashMap (ordem imprevisível) e TreeMap (ordem natural das chaves).
+---
+P: O que causa uma ConcurrentModificationException ao remover elementos de uma List?
+A: Modificar a lista diretamente durante um for-each, que usa um Iterator internamente
+B: Usar List.of() para criar a lista
+C: Declarar a lista como final
+D: Usar o método size() dentro de um loop
+R: A
+E: O for-each usa um Iterator internamente; se a lista for modificada diretamente (como list.remove()) durante a iteração, o estado interno do iterador fica inválido e uma ConcurrentModificationException é lançada.
+---
+P: Qual é a forma correta e segura de remover elementos de uma lista durante uma iteração?
+A: Usar Iterator.remove() ou o método removeIf()
+B: Chamar list.clear() dentro do loop
+C: Criar uma nova Thread para cada remoção
+D: Usar apenas o operador de atribuição =
+R: A
+E: O próprio Iterator possui um método remove() seguro durante a iteração; alternativamente, desde o Java 8, removeIf(condição) resolve o mesmo problema de forma mais concisa.
+---
+P: Na Stream API, o que a operação filter(condição) faz?
+A: Mantém apenas os elementos que atendem ao critério informado
+B: Ordena os elementos da coleção
+C: Remove permanentemente elementos da coleção original
+D: Converte a stream em uma String
+R: A
+E: filter() recebe um predicado e produz um novo stream contendo apenas os elementos que satisfazem essa condição, sem alterar a coleção original (streams nunca modificam a fonte).
+---

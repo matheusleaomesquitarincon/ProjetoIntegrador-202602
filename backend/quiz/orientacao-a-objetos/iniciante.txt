@@ -1,0 +1,40 @@
+P: Qual é a diferença fundamental entre uma classe e um objeto?
+A: Classe é o molde; objeto é a instância concreta criada a partir dela
+B: Classe e objeto são exatamente a mesma coisa em Java
+C: Objeto só existe dentro de métodos static
+D: Classe é criada apenas em tempo de execução
+R: A
+E: Uma classe define os atributos e métodos que um tipo de objeto terá; o objeto é a instância concreta criada com "new" a partir desse molde, com estado próprio e independente.
+---
+P: Qual dos quatro pilares da orientação a objetos está mais relacionado a esconder o estado interno de uma classe?
+A: Encapsulamento
+B: Herança
+C: Polimorfismo
+D: Abstração de dados de rede
+R: A
+E: Encapsulamento consiste em esconder os detalhes internos de uma classe, tornando atributos private e expondo apenas métodos públicos controlados (getters/setters) para acessá-los.
+---
+P: Quando o construtor padrão sem argumentos deixa de ser gerado automaticamente pelo Java?
+A: Assim que qualquer construtor é declarado explicitamente na classe
+B: Nunca deixa de existir
+C: Somente se a classe for abstrata
+D: Somente se o atributo for private
+R: A
+E: O Java só fornece um construtor padrão automático se nenhum construtor for declarado. Assim que se cria qualquer construtor, o padrão automático deixa de existir.
+---
+P: Para que serve a palavra-chave "this" dentro de um construtor?
+A: Referenciar o próprio objeto, diferenciando atributo de parâmetro com o mesmo nome
+B: Chamar um método de outra classe
+C: Declarar uma variável estática
+D: Impedir a criação de novos objetos
+R: A
+E: "this.nome = nome;" usa "this" para indicar que o atributo do objeto (à esquerda) recebe o valor do parâmetro (à direita), resolvendo a ambiguidade quando ambos têm o mesmo nome.
+---
+P: Qual modificador de acesso permite que um atributo seja visto apenas dentro da própria classe?
+A: private
+B: public
+C: protected
+D: default (de pacote)
+R: A
+E: private restringe o acesso apenas à própria classe; nem subclasses nem outras classes do mesmo pacote conseguem acessar diretamente um atributo private.
+---

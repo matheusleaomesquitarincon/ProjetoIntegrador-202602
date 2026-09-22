@@ -1,0 +1,40 @@
+P: Qual é a vantagem de usar @RestControllerAdvice combinado com @ExceptionHandler?
+A: Centraliza o tratamento de exceções, evitando try/catch espalhado por todos os controllers
+B: Impede que qualquer requisição HTTP seja processada
+C: Substitui totalmente o uso de Spring Data JPA
+D: Só funciona em aplicações sem banco de dados
+R: A
+E: @RestControllerAdvice permite interceptar exceções lançadas em qualquer controller da aplicação e traduzi-las em respostas HTTP padronizadas, sem duplicar lógica de tratamento em cada endpoint.
+---
+P: No contexto de autenticação stateless com JWT em APIs REST, como o cliente costuma enviar o token em cada requisição?
+A: No header Authorization, no formato "Bearer <token>"
+B: Dentro da URL como parâmetro obrigatório de query string
+C: Em um cookie que expira a cada requisição
+D: JWT elimina a necessidade de enviar qualquer informação
+R: A
+E: Em APIs stateless com JWT, o cliente faz login uma vez, recebe um token assinado, e passa a enviá-lo no header "Authorization: Bearer <token>" em cada requisição subsequente, sem o servidor manter sessão.
+---
+P: Qual é a principal diferença entre o modelo do Spring MVC tradicional e o Spring WebFlux?
+A: WebFlux é reativo e não bloqueante, liberando threads durante operações de I/O
+B: WebFlux elimina totalmente a necessidade de um banco de dados
+C: Spring MVC é sempre mais rápido que WebFlux em qualquer cenário
+D: WebFlux não pode ser usado para criar endpoints REST
+R: A
+E: No Spring MVC tradicional, cada requisição ocupa uma thread até a resposta ser gerada (modelo bloqueante). O WebFlux usa um modelo reativo baseado em Mono/Flux, liberando a thread durante operações de I/O, útil em cenários de alta concorrência.
+---
+P: O que o endpoint /actuator/health do Spring Boot Actuator indica?
+A: Se a aplicação e suas dependências (como o banco de dados) estão saudáveis
+B: A quantidade total de linhas de código do projeto
+C: A lista de todos os usuários cadastrados no sistema
+D: O histórico completo de commits do repositório
+R: A
+E: O Spring Boot Actuator expõe endpoints de monitoramento prontos, e /actuator/health é usado especificamente para indicar se a aplicação e suas dependências (banco, filas, etc.) estão funcionando corretamente.
+---
+P: Qual é a função do Micrometer em uma aplicação Spring Boot?
+A: Coletar métricas customizadas e exportá-las para sistemas como Prometheus ou Datadog
+B: Substituir totalmente o Spring Security
+C: Gerenciar exclusivamente a conexão com o banco de dados
+D: Compilar o projeto em tempo de execução
+R: A
+E: O Micrometer funciona como uma fachada de coleta de métricas usada internamente pelo Spring Boot, permitindo registrar métricas customizadas (como contadores) e exportá-las para diferentes sistemas de monitoramento.
+---

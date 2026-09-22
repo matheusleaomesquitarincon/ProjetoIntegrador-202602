@@ -1,0 +1,40 @@
+P: O que a palavra-chave "super(nome)" faz quando usada na primeira linha do construtor de uma subclasse?
+A: Chama o construtor da superclasse
+B: Cria uma nova instância da subclasse
+C: Sobrescreve um método da superclasse
+D: Remove o atributo herdado
+R: A
+E: super(nome) invoca o construtor da superclasse, e deve ser sempre a primeira linha do construtor da subclasse, garantindo que o estado herdado seja inicializado corretamente.
+---
+P: Qual é a diferença central entre sobrecarga (overloading) e sobrescrita (overriding)?
+A: Sobrecarga é resolvida em compilação; sobrescrita é resolvida em execução
+B: Sobrecarga só existe em interfaces
+C: Sobrescrita exige métodos com nomes diferentes
+D: Sobrecarga não pode ocorrer na mesma classe
+R: A
+E: Sobrecarga é ter métodos de mesmo nome com assinaturas diferentes na mesma classe (decidido em compilação). Sobrescrita é a subclasse redefinir um método herdado com a mesma assinatura (decidido dinamicamente em execução).
+---
+P: Desde qual versão do Java as interfaces podem ter métodos "default" com implementação?
+A: Java 8
+B: Java 5
+C: Java 11
+D: Java 17
+R: A
+E: A partir do Java 8, interfaces passaram a suportar métodos default (com implementação padrão) e métodos static, além dos métodos abstratos tradicionais.
+---
+P: Por que uma classe abstrata não pode ser instanciada diretamente?
+A: Porque ela pode conter métodos abstratos sem corpo, que precisam ser implementados pelas subclasses
+B: Porque toda classe abstrata é, na verdade, uma interface
+C: Porque ela não pode ter construtor
+D: Porque isso é apenas uma convenção, mas tecnicamente é permitido
+R: A
+E: Classes abstratas podem declarar métodos abstratos (sem implementação); como parte do seu comportamento pode estar incompleta, o Java proíbe sua instanciação direta — apenas subclasses concretas podem ser instanciadas.
+---
+P: Qual é a principal vantagem de uma classe poder implementar múltiplas interfaces, ao contrário de herdar de múltiplas classes?
+A: Java resolve a ausência de herança múltipla de classes através das interfaces
+B: Interfaces são mais lentas, mas mais seguras
+C: Isso é proibido em Java
+D: Interfaces substituem completamente o uso de classes abstratas
+R: A
+E: Java permite herança simples de classes, mas uma classe pode implementar quantas interfaces quiser — essa é a forma que a linguagem oferece para reaproveitar múltiplos "contratos" sem o problema do diamante.
+---

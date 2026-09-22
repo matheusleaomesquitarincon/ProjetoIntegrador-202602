@@ -1,0 +1,40 @@
+P: O que é o bytecode gerado pelo compilador Java?
+A: Um formato intermediário executado pela JVM
+B: O código-fonte já traduzido para uma linguagem humana
+C: Um arquivo de configuração do projeto
+D: Um tipo de arquivo exclusivo do Windows
+R: A
+E: O compilador javac traduz o código-fonte (.java) para bytecode (.class), um formato intermediário que a JVM interpreta e executa, permitindo "write once, run anywhere".
+---
+P: Qual é a assinatura correta do método principal de um programa Java?
+A: public static void main(String[] args)
+B: public void main(String args)
+C: static main(String[] args)
+D: public main() : void
+R: A
+E: A JVM exige exatamente essa assinatura: public (acessível de fora), static (chamado sem instanciar a classe), void (não retorna valor) e um array de String como parâmetro.
+---
+P: Por que o tipo String NÃO é considerado um tipo primitivo em Java?
+A: Porque é uma classe, e strings são imutáveis
+B: Porque só existe em versões antigas do Java
+C: Porque não pode ser usada em println
+D: Porque ocupa exatamente 8 bits
+R: A
+E: Diferente dos 8 tipos primitivos (int, double, char, boolean, etc.), String é uma classe do Java, e seus objetos são imutáveis: qualquer concatenação cria uma nova String.
+---
+P: O que acontece se o comando break for esquecido dentro de um case do switch?
+A: Ocorre fall-through: a execução continua para o próximo case
+B: O programa não compila
+C: O switch é ignorado silenciosamente
+D: Apenas o default é executado
+R: A
+E: Sem break, a execução "cai" para o case seguinte (fall-through), um erro comum para quem está começando com switch em Java.
+---
+P: Qual estrutura de repetição garante que o bloco de código execute pelo menos uma vez?
+A: do-while
+B: for
+C: while
+D: for-each
+R: A
+E: No do-while, a condição é verificada somente ao final do bloco, garantindo que o corpo seja executado ao menos uma vez, mesmo que a condição já comece falsa.
+---

@@ -1,0 +1,40 @@
+P: Por que "favor composition over inheritance" é uma recomendação comum em Effective Java?
+A: Porque herança cria acoplamento forte e composição permite trocar comportamento em tempo de execução
+B: Porque herança foi removida das versões recentes do Java
+C: Porque composição é sempre mais rápida em performance
+D: Porque interfaces não podem ser usadas com composição
+R: A
+E: Herança acopla fortemente subclasse e superclasse (fragile base class problem); composição delega comportamento a objetos internos, permitindo trocar e reutilizar comportamento sem hierarquias rígidas.
+---
+P: Qual é o contrato obrigatório entre os métodos equals() e hashCode()?
+A: Se a.equals(b) é true, então a.hashCode() deve ser igual a b.hashCode()
+B: hashCode() deve sempre retornar um valor diferente para cada objeto
+C: equals() não pode ser sobrescrito se hashCode() também for
+D: Não existe relação entre os dois métodos
+R: A
+E: Estruturas como HashMap e HashSet usam hashCode() para localizar o bucket e equals() para confirmar identidade. Se dois objetos são iguais por equals() mas têm hashCode() diferente, eles podem ser tratados incorretamente como distintos.
+---
+P: Quando faz mais sentido usar Comparator em vez de Comparable?
+A: Quando existem múltiplas formas válidas de ordenar o mesmo tipo, dependendo do contexto
+B: Quando a classe não pode ser modificada de forma alguma
+C: Comparator só funciona com tipos primitivos
+D: Comparable é sempre superior e Comparator está obsoleto
+R: A
+E: Comparable define uma única ordenação natural dentro da própria classe (compareTo). Comparator permite definir, externamente, quantas estratégias de ordenação forem necessárias para o mesmo tipo.
+---
+P: O que o compilador gera automaticamente ao declarar um record em Java?
+A: Construtor, getters sem prefixo "get", equals(), hashCode() e toString()
+B: Apenas um construtor vazio
+C: Apenas o método toString()
+D: Um novo tipo primitivo
+R: A
+E: Records eliminam o boilerplate de classes de dados imutáveis: o compilador gera automaticamente o construtor, os acessores (sem "get"), equals(), hashCode() e toString(), e os campos são implicitamente final.
+---
+P: Qual é a vantagem de uma sealed interface (Java 17+) em um switch que trata todos os seus subtipos?
+A: O compilador garante exaustividade e pode dispensar a cláusula default
+B: Ela impede totalmente o uso de switch
+C: Ela transforma automaticamente os subtipos em enums
+D: Ela permite herança múltipla de classes concretas
+R: A
+E: Como sealed interface Forma permits Circulo, Quadrado, Triangulo declara explicitamente todos os subtipos possíveis, o compilador sabe que o switch cobre todos os casos e pode exigir exaustividade sem precisar de default.
+---

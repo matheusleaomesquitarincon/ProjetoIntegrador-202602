@@ -248,7 +248,203 @@ function Materials() {
 }
 
 function Quiz() {
-  return <div className="page inner-page"><PageIntro eyebrow="Pratique" title="Quiz de Java" text="Teste o que você aprendeu e descubra onde pode continuar evoluindo." /><div className="quiz-empty"><div className="quiz-symbol">?</div><h2>Seu primeiro quiz está sendo preparado</h2><p>As perguntas teóricas sobre Java serão adicionadas aqui.</p><button className="secondary-button" disabled>Em breve</button></div></div>;
+  const [topic, setTopic] = useState('fundamentos');
+  const [difficulty, setDifficulty] = useState('iniciante');
+  const [stage, setStage] = useState('config'); // config | quiz | resultado
+  const [perguntas, setPerguntas] = useState([]);
+  const [respostas, setRespostas] = useState({});
+  const [resultado, setResultado] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [pontuacao, setPontuacao] = useState(null);
+
+  useEffect(() => { carregarPontuacao(); }, []);
+
+  function carregarPontuacao() {
+    fetch('http://localhost:8080/api/quiz/pontuacao', { credentials: 'include' })
+      .then((response) => (response.ok ? response.json() : null))
+      .then(setPontuacao)
+      .catch(() => {});
+  }
+
+  async function iniciarQuiz() {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await fetch(`http://localhost:8080/api/quiz/${topic}/${difficulty}`, { credentials: 'include' });
+      if (!response.ok) throw new Error('Não foi possível carregar o quiz.');
+      const data = await response.json();
+      setPerguntas(data);
+      setRespostas({});
+      setResultado(null);
+      setStage('quiz');
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function selecionar(perguntaId, letra) {
+    setRespostas((atual) => ({ ...atual, [perguntaId]: letra }));
+  }
+
+  async function enviarRespostas() {
+    const texto = Object.entries(respostas).map(([id, letra]) => `${id}:${letra}`).join(',');
+    setLoading(true);
+    setError('');
+    try {
+      const response = await fetch(`http://localhost:8080/api/quiz/${topic}/${difficulty}/corrigir`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ respostas: texto }),
+      });
+      if (!response.ok) throw new Error('Não foi possível corrigir o quiz.');
+      const data = await response.json();
+      setResultado(data);
+      setStage('resultado');
+      carregarPontuacao();
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function refazer() {
+    setStage('config');
+    setPerguntas([]);
+    setRespostas({});
+    setResultado(null);
+    setError('');
+  }
+
+  const todasRespondidas = perguntas.length > 0 && perguntas.every((pergunta) => respostas[pergunta.id]);
+
+  return (
+    <div className="page inner-page">
+      <PageIntro eyebrow="Pratique" title="Quiz de Java" text="Teste o que você aprendeu e descubra onde pode continuar evoluindo." />
+
+      {pontuacao && (
+        <div className="quiz-score-summary">
+          <span className="quiz-score-label">Sua pontuação total</span>
+          <span className="quiz-score-value">{pontuacao.pontuacaoTotal} pts</span>
+        </div>
+      )}
+
+      {stage === 'config' && (
+        <section className="materials-panel">
+          <div className="material-fields">
+            <label>
+              Tópico da linguagem Java
+              <select value={topic} onChange={(event) => setTopic(event.target.value)}>
+                <option value="fundamentos">Fundamentos</option>
+                <option value="orientacao-a-objetos">Orientação a Objetos</option>
+                <option value="collections">Collections</option>
+                <option value="excecoes">Exceções</option>
+                <option value="spring">Spring Boot</option>
+              </select>
+            </label>
+            <label>
+              Dificuldade
+              <select value={difficulty} onChange={(event) => setDifficulty(event.target.value)}>
+                <option value="iniciante">Iniciante</option>
+                <option value="intermediario">Intermediário</option>
+                <option value="avancado">Avançado</option>
+              </select>
+            </label>
+          </div>
+          {error && <p className="error-message">{error}</p>}
+          <button className="primary-button quiz-start-button" onClick={iniciarQuiz} disabled={loading}>
+            {loading ? 'Carregando...' : 'Começar quiz'}
+          </button>
+        </section>
+      )}
+
+      {stage === 'quiz' && (
+        <section className="quiz-panel">
+          <div className="quiz-progress">
+            <span>{Object.keys(respostas).length} de {perguntas.length} respondidas</span>
+          </div>
+          {perguntas.map((pergunta, index) => (
+            <div className="quiz-question" key={pergunta.id}>
+              <p className="quiz-question-title"><span>{index + 1}.</span> {pergunta.enunciado}</p>
+              <div className="quiz-options">
+                {pergunta.alternativas.map((alternativa) => (
+                  <button
+                    key={alternativa.letra}
+                    className={respostas[pergunta.id] === alternativa.letra ? 'quiz-option selected' : 'quiz-option'}
+                    onClick={() => selecionar(pergunta.id, alternativa.letra)}
+                  >
+                    <span className="quiz-option-letter">{alternativa.letra}</span>{alternativa.texto}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          {error && <p className="error-message">{error}</p>}
+          <div className="quiz-actions">
+            <button className="secondary-button" onClick={refazer}>Cancelar</button>
+            <button className="primary-button" onClick={enviarRespostas} disabled={!todasRespondidas || loading}>
+              {loading ? 'Corrigindo...' : 'Corrigir quiz'}
+            </button>
+          </div>
+        </section>
+      )}
+
+      {stage === 'resultado' && resultado && (
+        <section className="quiz-panel">
+          <div className="quiz-result-summary">
+            <div className="quiz-result-score">
+              <span className="quiz-result-number">{resultado.acertos}/{resultado.total}</span>
+              <span>acertos nesta tentativa</span>
+            </div>
+            <div className="quiz-result-points">+{resultado.pontosGanhos} pts <span>total: {resultado.pontuacaoTotal} pts</span></div>
+          </div>
+          {resultado.detalhes.map((detalhe, index) => (
+            <div className={detalhe.correta ? 'quiz-review correta' : 'quiz-review incorreta'} key={detalhe.perguntaId}>
+              <p className="quiz-question-title"><span>{index + 1}.</span> {detalhe.enunciado}</p>
+              <div className="quiz-options">
+                {detalhe.alternativas.map((alternativa) => {
+                  let classe = 'quiz-option review';
+                  if (alternativa.letra === detalhe.respostaCorreta) classe += ' correta';
+                  else if (alternativa.letra === detalhe.respostaDada) classe += ' incorreta';
+                  return (
+                    <div key={alternativa.letra} className={classe}>
+                      <span className="quiz-option-letter">{alternativa.letra}</span>{alternativa.texto}
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="quiz-review-status">
+                {detalhe.correta ? '✓ Você acertou' : `✗ Você errou · resposta certa: ${detalhe.respostaCorreta}`}
+              </p>
+              <p className="quiz-review-explicacao">{detalhe.explicacao}</p>
+            </div>
+          ))}
+          <div className="quiz-actions">
+            <button className="secondary-button" onClick={refazer}>Fazer outro quiz</button>
+          </div>
+        </section>
+      )}
+
+      {pontuacao && pontuacao.tentativas.length > 0 && (
+        <section className="quiz-history">
+          <h3>Histórico de tentativas</h3>
+          <div className="quiz-history-list">
+            {pontuacao.tentativas.map((tentativa, index) => (
+              <div className="quiz-history-item" key={index}>
+                <span>{tentativa.topico} · {tentativa.dificuldade}</span>
+                <span>{tentativa.acertos}/{tentativa.total} acertos</span>
+                <span>+{tentativa.pontosGanhos} pts</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
 }
 
 function UserSettings({ darkMode, setDarkMode, user, onLogout }) {
